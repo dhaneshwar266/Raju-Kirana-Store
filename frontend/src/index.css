@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Exact Midnight Gold Theme Tokens */
+    --bg-primary: #0A0A0C;
+    --bg-secondary: #101014;
+    --surface-elevated: #17171C;
+    --surface-raised: #202027;
+    --gold-primary: #D2AC68;
+    --gold-soft: #E8CA91;
+    --text-primary: #F5F0E7;
+    --text-secondary: #B0AAA1;
+    --text-muted: #817C77;
+    --border-color: #302E31;
+    --border-gold-subtle: rgba(210, 172, 104, 0.22);
+    --success: #70C69A;
+    --error: #F08A83;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+
+  /* Editorial Display Headings */
+  h1, h2, h3, .font-serif, .font-editorial {
+    font-family: 'Cinzel', 'Noto Sans Devanagari', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Tabular Numerals for Monetary Accuracy */
+  .tabular-nums, .price-numeral {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Midnight Gold Utility Classes */
+.bg-midnight-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-midnight-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-midnight-surface {
+  background-color: var(--surface-elevated);
+}
+
+.bg-midnight-raised {
+  background-color: var(--surface-raised);
+}
+
+.text-gold-primary {
+  color: var(--gold-primary);
+}
+
+.text-gold-soft {
+  color: var(--gold-soft);
+}
+
+.text-ivory-primary {
+  color: var(--text-primary);
+}
+
+.text-ivory-secondary {
+  color: var(--text-secondary);
+}
+
+.text-ivory-muted {
+  color: var(--text-muted);
+}
+
+.border-midnight {
+  border-color: var(--border-color);
+}
+
+.border-gold-subtle {
+  border-color: var(--border-gold-subtle);
+}
+
+/* Subtle Midnight Shadow */
+.midnight-card-shadow {
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.65), 0 4px 12px -4px rgba(0, 0, 0, 0.45);
+}
+
+.midnight-card-hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(210, 172, 104, 0.35);
+}
+
+.gold-glow-subtle {
+  box-shadow: 0 0 20px -4px rgba(210, 172, 104, 0.22);
+}
+
+/* Glassmorphism Dark Panel */
+.midnight-glass {
+  background: rgba(23, 23, 28, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+}
+
+/* Antique Gold Primary Button */
+.btn-gold-primary {
+  background-color: var(--gold-primary);
+  color: #0A0A0C;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gold-primary:hover {
+  background-color: var(--gold-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px -2px rgba(210, 172, 104, 0.35);
+}
+
+/* Secondary Button */
+.btn-gold-secondary {
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gold-secondary:hover {
+  border-color: var(--gold-primary);
+  color: var(--gold-soft);
+  background-color: var(--surface-raised);
+}
+
+/* Custom Charcoal & Gold Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #302E31;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D2AC68;
+}
+
+/* Smooth Fade Animations */
+@keyframes midnightFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: midnightFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
