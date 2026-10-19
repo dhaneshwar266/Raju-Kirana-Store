@@ -1,10 +1,10 @@
 import React from 'react';
-import { Phone, MapPin, Clock, Shield } from 'lucide-react';
+import { Phone, MapPin, Clock, Shield, Navigation } from 'lucide-react';
 import WhatsAppButton from './WhatsAppButton';
 
-export default function Footer({ storeSettings, onNavigate, categories = [] }) {
+export default function Footer({ storeSettings, onNavigate }) {
   const storeName = storeSettings?.store_name || 'राजू किराना स्टोर';
-  const tagline = storeSettings?.tagline || 'घर का शुद्ध राशन • आज का ताज़ा भाव';
+  const tagline = storeSettings?.tagline || 'दुकान का पूरा सामान एवं आज का ताजा भाव';
   const phone = storeSettings?.contact_phone || '6266444862';
   const address = storeSettings?.address || 'Mahamaya gali, pisid, kasdol';
   const hours = storeSettings?.opening_hours || 'रोजाना: सुबह 7:00 से रात 10:00 तक';
@@ -12,163 +12,91 @@ export default function Footer({ storeSettings, onNavigate, categories = [] }) {
   const mapsUrl = storeSettings?.google_maps_url || 'https://maps.app.goo.gl/3tPyDrjZFJjavukX8';
 
   return (
-    <footer className="bg-[#0A0A0C] text-[#B0AAA1] pt-12 pb-8 border-t border-[#302E31] mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-[rgba(210,172,104,0.22)]">
-          {/* Col 1: Store Brand */}
-          <div className="space-y-4">
+    <footer className="bg-[#0A0A0C] text-[#B0AAA1] pt-8 pb-10 border-t border-[#302E31] mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Main Footer Block */}
+        <div className="bg-[#121216] border border-[#302E31] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          {/* Store Info */}
+          <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#17171C] border border-[#302E31] text-[#D2AC68] flex items-center justify-center font-bold shadow-xs">
-                <span className="font-bold text-base text-[#D2AC68]">राजू</span>
+              <div className="w-10 h-10 rounded-xl bg-[#17171C] border border-[#302E31] text-[#D2AC68] flex items-center justify-center font-bold text-sm shadow-xs">
+                राजू
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#F5F0E7] tracking-tight">{storeName}</h3>
+                <h3 className="text-lg font-bold text-[#F5F0E7] tracking-tight">{storeName}</h3>
                 <p className="text-xs text-[#D2AC68] font-medium">{tagline}</p>
               </div>
             </div>
 
-            <p className="text-xs text-[#817C77] leading-relaxed font-normal">
-              शुद्ध गेहूं का आटा, बिना पॉलिश दालें, ग्राम में खुले खड़े व पिसे मसाले, शुद्ध तेल और रोज़मर्रा की घरेलू जरूरतें।
-            </p>
+            <div className="flex items-center gap-4 text-xs text-[#B0AAA1] flex-wrap pt-1">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#D2AC68] shrink-0" />
+                <span>{address}</span>
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#D2AC68] shrink-0" />
+                <span>{hours}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons: Maps, Call, WhatsApp */}
+          <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#D2AC68] hover:text-[#E8CA91] border border-[#302E31] hover:border-[#D2AC68]/50 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+              title="गूगल मैप्स पर दुकान देखें"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              <span>मैप पर रास्ता देखें</span>
+            </a>
+
+            {phone && (
+              <a
+                href={`tel:${phone}`}
+                className="flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#F5F0E7] hover:text-[#70C69A] border border-[#302E31] px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+                title="फोन कॉल करें"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#70C69A]" />
+                <span className="tabular-nums">कॉल: {phone}</span>
+              </a>
+            )}
 
             {whatsappNumber && (
               <WhatsAppButton
                 whatsappNumber={whatsappNumber}
                 storeName={storeName}
-                className="w-full text-xs py-2.5"
+                className="text-xs py-2 px-3.5"
               />
             )}
           </div>
-
-          {/* Col 2: Quick Links */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#D2AC68] uppercase tracking-wider">
-              दुकान के पेज (Navigation)
-            </h4>
-            <ul className="space-y-2 text-xs font-semibold">
-              <li>
-                <button
-                  onClick={() => onNavigate('home')}
-                  className="hover:text-[#E8CA91] transition-colors cursor-pointer"
-                >
-                  मुख्य पृष्ठ (Home)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('products')}
-                  className="hover:text-[#E8CA91] transition-colors cursor-pointer"
-                >
-                  पूरा सामान और भाव सूची (All Rates)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('categories')}
-                  className="hover:text-[#E8CA91] transition-colors cursor-pointer"
-                >
-                  सामान की श्रेणियाँ (Categories)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('contact')}
-                  className="hover:text-[#E8CA91] transition-colors cursor-pointer"
-                >
-                  दुकान का पता व समय (Hours & Contact)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => onNavigate('admin-login')}
-                  className="text-[#D2AC68] hover:text-[#E8CA91] transition-colors flex items-center gap-1.5 cursor-pointer pt-1"
-                >
-                  <Shield className="w-3.5 h-3.5 text-[#D2AC68]" />
-                  <span>दुकानदार लॉगिन (मालिक पोर्टल)</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Popular Categories */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#D2AC68] uppercase tracking-wider">
-              श्रेणियाँ (Categories)
-            </h4>
-            <ul className="space-y-2 text-xs font-medium">
-              {categories.slice(0, 6).map((cat) => (
-                <li key={cat.id}>
-                  <button
-                    onClick={() => {
-                      onNavigate('products', { category_id: cat.id });
-                    }}
-                    className="hover:text-[#E8CA91] transition-colors cursor-pointer text-left truncate max-w-full block"
-                  >
-                    {cat.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 4: Store Visit & Timings */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#D2AC68] uppercase tracking-wider">
-              दुकान का समय व संपर्क
-            </h4>
-            <div className="space-y-2.5 text-xs text-[#B0AAA1]">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#D2AC68] shrink-0 mt-0.5" />
-                <div>
-                  <a
-                    href={mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-[#D2AC68] transition-colors hover:underline block"
-                    title="गूगल मैप पर दुकान की लोकेशन खोलें"
-                  >
-                    {address}
-                  </a>
-                  <a
-                    href={mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-[#D2AC68] hover:text-[#E8CA91] font-bold inline-block mt-0.5"
-                  >
-                    📍 मैप पर रास्ता देखें (Open Map)
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-[#D2AC68] shrink-0 mt-0.5" />
-                <span>{hours}</span>
-              </div>
-
-              {phone && (
-                <div className="flex items-start gap-2.5">
-                  <Phone className="w-4 h-4 text-[#D2AC68] shrink-0 mt-0.5" />
-                  <a href={`tel:${phone}`} className="hover:text-[#E8CA91] transition-colors font-bold text-[#F5F0E7] tabular-nums">
-                    {phone}
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-[#817C77] gap-3">
+        {/* Bottom bar with Copyright & Owner login */}
+        <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-[#817C77] gap-3 px-1">
           <div>
             © {new Date().getFullYear()} {storeName} • आपकी अपनी किराना दुकान
           </div>
+
           <div className="flex items-center gap-4">
-            <button onClick={() => onNavigate('contact')} className="hover:text-[#E8CA91] transition-colors cursor-pointer">
-              दुकान का समय
-            </button>
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#D2AC68] transition-colors"
+            >
+              Google Maps
+            </a>
             <span>•</span>
-            <button onClick={() => onNavigate('admin-login')} className="hover:text-[#E8CA91] transition-colors cursor-pointer text-[#D2AC68]">
-              मालिक लॉगिन
+            <button
+              onClick={() => onNavigate('admin-login')}
+              className="text-[#D2AC68] hover:text-[#E8CA91] transition-colors flex items-center gap-1 cursor-pointer font-medium"
+            >
+              <Shield className="w-3 h-3 text-[#D2AC68]" />
+              <span>मालिक लॉगिन (Admin)</span>
             </button>
           </div>
         </div>

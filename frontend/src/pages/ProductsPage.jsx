@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, SlidersHorizontal, PackageX, RotateCcw, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { PackageX, RotateCcw, ChevronLeft, ChevronRight, Sparkles, MapPin, Phone, Scale, Navigation } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import CategoryPills from '../components/CategoryPills';
 
@@ -22,85 +22,85 @@ export default function ProductsPage({
   onSelectProduct,
   storeSettings,
   onResetFilters,
+  onOpenCalculator,
 }) {
   const currency = storeSettings?.currency_symbol || '₹';
+  const address = storeSettings?.address || 'Mahamaya gali, pisid, kasdol';
+  const phone = storeSettings?.contact_phone || '6266444862';
+  const mapsUrl = storeSettings?.google_maps_url || 'https://maps.app.goo.gl/3tPyDrjZFJjavukX8';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 bg-[#0A0A0C] text-[#F5F0E7]">
-      {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-[#302E31]">
-        <div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D2AC68] bg-[#17171C] px-2.5 py-0.5 rounded border border-[#302E31]">
-            <Sparkles className="w-3 h-3 text-[#D2AC68]" />
-            पक्की भाव सूची • COUNTER RATES
-          </span>
-          <h1 className="text-2xl sm:text-4xl font-bold text-[#F5F0E7] mt-2 tracking-tight">
-            दुकान का पूरा सामान एवं आज के भाव
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8 bg-[#0A0A0C] text-[#F5F0E7]">
+      {/* Top Banner: Store Info & Daily Rates Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[#302E31]">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D2AC68] bg-[#17171C] px-2.5 py-0.5 rounded border border-[#302E31]">
+              <Sparkles className="w-3 h-3 text-[#D2AC68]" />
+              पक्की भाव सूची • TODAY'S LIVE RATES
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#70C69A] bg-[#101014] px-2.5 py-0.5 rounded border border-[#70C69A]/30">
+              दुकान का ताजा काउंटर भाव
+            </span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F5F0E7] tracking-tight">
+            दुकान का पूरा सामान एवं आज के ताजा भाव
           </h1>
-          <p className="text-xs sm:text-sm text-[#817C77] mt-1 max-w-2xl font-normal">
-            सभी सामान के सही तौल, पैकेट साइज और ताज़ा काउंटर भाव यहाँ देखें।
+
+          <p className="text-xs sm:text-sm text-[#817C77] max-w-2xl font-normal">
+            घर का आटा, बिना पॉलिश दालें, शुद्ध तेल और ग्राम में खुले मसालों के सही रेट यहाँ देखें।
           </p>
+
+          {/* Quick Info & Action Chips */}
+          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#D2AC68] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#D2AC68]" />
+              <span>{address}</span>
+              <Navigation className="w-3 h-3 text-[#D2AC68] ml-1" />
+            </a>
+
+            {phone && (
+              <a
+                href={`tel:${phone}`}
+                className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#70C69A] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors font-semibold"
+              >
+                <Phone className="w-3.5 h-3.5 text-[#70C69A]" />
+                <span className="tabular-nums">कॉल करें: {phone}</span>
+              </a>
+            )}
+
+            {onOpenCalculator && (
+              <button
+                type="button"
+                onClick={onOpenCalculator}
+                className="inline-flex items-center gap-1.5 bg-[#D2AC68]/15 hover:bg-[#D2AC68]/25 text-[#E8CA91] px-3 py-1.5 rounded-lg border border-[#D2AC68]/40 transition-colors font-bold cursor-pointer"
+              >
+                <Scale className="w-3.5 h-3.5 text-[#D2AC68]" />
+                <span>₹10 / ₹15 कांटा कैलकुलेटर</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Counter */}
-        <div className="text-xs sm:text-sm text-[#B0AAA1] font-semibold bg-[#17171C] px-4 py-2 rounded-xl border border-[#302E31] self-start md:self-auto tabular-nums">
-          कुल सामान: <span className="font-bold text-[#D2AC68]">{totalProducts}</span> में से{' '}
-          <span className="font-bold text-[#F5F0E7]">{products.length}</span> दिखाए जा रहे हैं
+        {/* Total Count Badge */}
+        <div className="text-xs sm:text-sm text-[#B0AAA1] font-semibold bg-[#17171C] px-4 py-2.5 rounded-xl border border-[#302E31] self-start lg:self-end tabular-nums shrink-0 shadow-xs">
+          दुकान में कुल सामान: <span className="font-bold text-[#D2AC68] text-base">{totalProducts}</span>
         </div>
       </div>
 
-      {/* Filter and Control Bar */}
-      <div className="bg-[#17171C] p-4 sm:p-5 rounded-2xl border border-[#302E31] midnight-card-shadow space-y-4">
-        {/* Row 1: Search, Sort & In-Stock */}
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          {/* Search Bar */}
-          <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#D2AC68]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="नाम या ब्रांड से खोजें (जैसे आटा, दाल, जीरा, तेल, चीनी)..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-[#101014] text-[#F5F0E7] placeholder-[#817C77] rounded-xl border border-[#302E31] focus:border-[#D2AC68] outline-none font-medium"
-            />
-          </div>
-
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-            <SlidersHorizontal className="w-4 h-4 text-[#817C77] hidden sm:inline" />
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm bg-[#101014] text-[#B0AAA1] rounded-xl border border-[#302E31] focus:border-[#D2AC68] outline-none font-bold cursor-pointer"
-            >
-              <option value="newest">क्रम: नया सामान पहले</option>
-              <option value="name_asc">क्रम: नाम (A से Z)</option>
-              <option value="name_desc">क्रम: नाम (Z से A)</option>
-              <option value="price_asc">क्रम: कम भाव पहले (Low to High)</option>
-              <option value="price_desc">क्रम: ज्यादा भाव पहले (High to Low)</option>
-            </select>
-          </div>
-
-          {/* In Stock Only Checkbox */}
-          <label className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#101014] hover:bg-[#202027] border border-[#302E31] text-xs font-bold text-[#B0AAA1] hover:text-[#F5F0E7] cursor-pointer select-none shrink-0 w-full sm:w-auto justify-center transition-colors">
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={(e) => onToggleInStockOnly(e.target.checked)}
-              className="w-3.5 h-3.5 accent-[#D2AC68] rounded cursor-pointer"
-            />
-            <span>केवल उपलब्ध सामान (In Stock)</span>
-          </label>
-        </div>
-
-        {/* Row 2: Category Filter Horizontal Pills */}
-        <div className="pt-2 border-t border-[#302E31]">
-          <CategoryPills
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onSelectCategory={onSelectCategory}
-          />
-        </div>
+      {/* Category Filter Horizontal Pills */}
+      <div className="bg-[#17171C] p-3 sm:p-4 rounded-2xl border border-[#302E31] midnight-card-shadow">
+        <CategoryPills
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={onSelectCategory}
+        />
       </div>
 
       {/* Active filters summary */}

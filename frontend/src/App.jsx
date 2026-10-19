@@ -7,10 +7,7 @@ import ProductDetailModal from './components/ProductDetailModal';
 import ScaleCalculatorModal from './components/ScaleCalculatorModal';
 import Toast from './components/Toast';
 
-import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
-import CategoriesPage from './pages/CategoriesPage';
-import ContactPage from './pages/ContactPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
@@ -21,14 +18,17 @@ import { getProducts } from './api/products';
 function AppContent() {
   const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // Navigation & View
-  const [currentView, setCurrentView] = useState('home');
+  // Navigation & View - Default is directly the products catalogue
+  const [currentView, setCurrentView] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+      return 'admin-login';
+    }
+    return 'products';
+  });
 
   // Core Data
   const [storeSettings, setStoreSettings] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [recentProducts, setRecentProducts] = useState([]);
 
   // Products Page State
   const [products, setProducts] = useState([]);
@@ -71,23 +71,6 @@ function AppContent() {
     loadInitialData();
   }, []);
 
-  // Fetch featured and recent products for homepage
-  useEffect(() => {
-    async function loadHomeProducts() {
-      try {
-        const [featRes, recRes] = await Promise.all([
-          getProducts({ is_featured: true, size: 8 }),
-          getProducts({ sort_by: 'newest', size: 8 }),
-        ]);
-        setFeaturedProducts(featRes.items || []);
-        setRecentProducts(recRes.items || []);
-      } catch (err) {
-        console.error('Failed to load home products:', err);
-      }
-    }
-    loadHomeProducts();
-  }, []);
-
   // Fetch products catalogue with filters
   const fetchCatalogue = async () => {
     setProductsLoading(true);
@@ -98,14 +81,14 @@ function AppContent() {
         is_available: inStockOnly ? true : undefined,
         sort_by: sortBy,
         page: currentPage,
-        size: 16,
+        size: 50, // Load all products clearly on one unified price page
       };
       const res = await getProducts(params);
       setProducts(res.items || []);
       setTotalProducts(res.total || 0);
       setTotalPages(res.pages || 1);
     } catch (err) {
-      showToast({ type: 'error', title: 'Error', message: 'Could not fetch products. Please try again.' });
+      showToast({ type: 'error', title: 'त्रुटि', message: 'सामान लोड नहीं हो सका। कृपया दोबारा प्रयास करें।' });
     } finally {
       setProductsLoading(false);
     }
@@ -122,7 +105,12 @@ function AppContent() {
     if (extraParams.category_id !== undefined) {
       setSelectedCategory(extraParams.category_id);
     }
-    setCurrentView(view);
+    // Customer views always stay on the unified products & rate list
+    if (view === 'home' || view === 'categories' || view === 'contact' || view === 'products') {
+      setCurrentView('products');
+    } else {
+      setCurrentView(view);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -161,7 +149,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0C] text-[#F5F0E7]">
-      {/* Public Navbar */}
+      {/* Public Store Header */}
       <Navbar
         storeSettings={storeSettings}
         searchQuery={searchQuery}
@@ -171,26 +159,14 @@ function AppContent() {
         onOpenCalculator={() => setIsScaleCalculatorOpen(true)}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area: Purely the Products & Daily Rates Page */}
       <main className="flex-1">
-        {currentView === 'home' && (
-          <HomePage
-            storeSettings={storeSettings}
-            categories={categories}
-            featuredProducts={featuredProducts}
-            recentProducts={recentProducts}
-            selectedCategory={selectedCategory}
-            onSelectCategory={(catId) => handleNavigate('products', { category_id: catId })}
-            onSelectProduct={setSelectedProduct}
+        {currentView === 'admin-login' ? (
+          <AdminLoginPage
             onNavigate={handleNavigate}
-            onSearchSubmit={(term) => {
-              setSearchQuery(term);
-              handleNavigate('products');
-            }}
+            showToast={showToast}
           />
-        )}
-
-        {currentView === 'products' && (
+        ) : (
           <ProductsPage
             products={products}
             totalProducts={totalProducts}
@@ -222,35 +198,15 @@ function AppContent() {
             onSelectProduct={setSelectedProduct}
             storeSettings={storeSettings}
             onResetFilters={handleResetFilters}
-          />
-        )}
-
-        {currentView === 'categories' && (
-          <CategoriesPage
-            categories={categories}
-            onSelectCategory={(catId) => handleNavigate('products', { category_id: catId })}
-          />
-        )}
-
-        {currentView === 'contact' && (
-          <ContactPage
-            storeSettings={storeSettings}
-          />
-        )}
-
-        {currentView === 'admin-login' && (
-          <AdminLoginPage
-            onNavigate={handleNavigate}
-            showToast={showToast}
+            onOpenCalculator={() => setIsScaleCalculatorOpen(true)}
           />
         )}
       </main>
 
-      {/* Public Footer */}
+      {/* Clean, Focused Footer */}
       <Footer
         storeSettings={storeSettings}
         onNavigate={handleNavigate}
-        categories={categories}
       />
 
       {/* Floating WhatsApp button (only when number is configured) */}
@@ -274,7 +230,7 @@ function AppContent() {
       {/* Scale Calculator Modal (₹ to Grams) */}
       {isScaleCalculatorOpen && (
         <ScaleCalculatorModal
-          products={products.length > 0 ? products : (featuredProducts.length > 0 ? featuredProducts : recentProducts)}
+          products={products}
           onClose={() => setIsScaleCalculatorOpen(false)}
           storeSettings={storeSettings}
         />
