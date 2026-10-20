@@ -38,3 +38,10 @@ export async function deleteProduct(id) {
     method: 'DELETE',
   });
 }
+
+export async function clearAllProducts() {
+  return await fetchApi('/products/clear-all', {
+    method: 'POST',
+  });
+}
+

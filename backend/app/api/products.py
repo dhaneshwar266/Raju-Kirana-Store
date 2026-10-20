@@ -266,6 +266,19 @@ def update_product(
     return ProductOut.model_validate(product)
 
 
+@router.delete("/clear-all", status_code=status.HTTP_200_OK)
+@router.post("/clear-all", status_code=status.HTTP_200_OK)
+def clear_all_products(
+    db: Session = Depends(get_db),
+    current_admin: AdminUser = Depends(get_current_admin),
+):
+    count = db.query(Product).count()
+    db.query(ProductPriceOption).delete()
+    db.query(Product).delete()
+    db.commit()
+    return {"message": f"Successfully removed all {count} products"}
+
+
 @router.delete("/{product_id}", status_code=status.HTTP_200_OK)
 def delete_product(
     product_id: int,

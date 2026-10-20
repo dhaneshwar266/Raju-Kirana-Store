@@ -72,8 +72,8 @@ def seed_database(db: Session):
         db.add(admin)
         db.commit()
 
-    # 4. Seed realistic sample products if none exist
-    if db.query(Product).count() == 0:
+    # 4. Seed realistic sample products only if explicitly requested
+    if os.getenv("SEED_SAMPLE_PRODUCTS", "false").lower() == "true" and db.query(Product).count() == 0:
         sample_products = [
             # Type B: Sold by Weight
             {

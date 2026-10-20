@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, Edit2, Trash2, Package, ChevronLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
-import { deleteProduct, updateProduct } from '../../api/products';
+import { deleteProduct, updateProduct, clearAllProducts } from '../../api/products';
 import { getFullImageUrl } from '../../api/client';
 
 export default function ProductList({
@@ -13,6 +13,7 @@ export default function ProductList({
   showToast,
   currencySymbol = '₹',
 }) {
+  const [clearing, setClearing] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -89,6 +90,28 @@ export default function ProductList({
     }
   };
 
+  const handleClearAll = async () => {
+    const confirmed = window.confirm(
+      '⚠️ क्या आप वाकई दुकान के सभी पुराने सामान हटाना चाहते हैं?\n\nइसके बाद सारे पुराने सामान हट जाएंगे और आप अपने नए सामान अपनी पसंद से जोड़ सकेंगे।'
+    );
+    if (!confirmed) return;
+
+    try {
+      setClearing(true);
+      await clearAllProducts();
+      showToast({
+        type: 'success',
+        title: 'सभी सामान हटा दिए गए',
+        message: 'दुकान के सभी पुराने सामान सफलतापूर्वक हटा दिए गए हैं। अब आप अपने नए सामान जोड़ सकते हैं।',
+      });
+      onRefresh();
+    } catch (err) {
+      showToast({ type: 'error', title: 'त्रुटि', message: err.message || 'सामान हटाए नहीं जा सके।' });
+    } finally {
+      setClearing(false);
+    }
+  };
+
   return (
     <div className="space-y-6 bg-[#0A0A0C] text-[#F5F0E7]">
       {/* Top action row */}
@@ -102,13 +125,27 @@ export default function ProductList({
           </p>
         </div>
 
-        <button
-          onClick={onAddNewProduct}
-          className="px-5 py-3 btn-gold-primary rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer shrink-0"
-        >
-          <Plus className="w-5 h-5" />
-          <span>+ नया सामान जोड़ें (Add Product)</span>
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {products.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              disabled={clearing}
+              className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border border-[#F08A83]/40 text-[#F08A83] hover:bg-[#F08A83]/10 transition-colors cursor-pointer disabled:opacity-50"
+              title="दुकान के सभी पुराने सामान एक साथ हटाएं"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>{clearing ? 'हटाया जा रहा है...' : 'सभी पुराने सामान हटाएं (Clear All)'}</span>
+            </button>
+          )}
+
+          <button
+            onClick={onAddNewProduct}
+            className="px-5 py-2.5 btn-gold-primary rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>+ नया सामान जोड़ें (Add Product)</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Toolbar */}

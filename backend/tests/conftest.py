@@ -13,6 +13,7 @@ from sqlalchemy.pool import StaticPool
 # Set test environment variables before importing app
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["SECRET_KEY"] = "test-secret-key-32-characters-long!!"
+os.environ["SEED_SAMPLE_PRODUCTS"] = "true"
 
 from app.database import Base, get_db
 from app.main import app

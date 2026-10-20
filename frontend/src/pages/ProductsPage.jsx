@@ -145,21 +145,35 @@ export default function ProductsPage({
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="bg-[#17171C] rounded-2xl border border-[#302E31] p-12 text-center max-w-lg mx-auto space-y-4 my-8 midnight-card-shadow">
-          <div className="w-14 h-14 rounded-2xl bg-[#202027] text-[#D2AC68] flex items-center justify-center mx-auto border border-[#302E31]">
-            <PackageX className="w-7 h-7 stroke-[1.5]" />
+        <div className="bg-[#17171C] rounded-2xl border border-[#302E31] p-10 sm:p-14 text-center max-w-lg mx-auto space-y-4 my-8 midnight-card-shadow">
+          <div className="w-16 h-16 rounded-2xl bg-[#202027] text-[#D2AC68] flex items-center justify-center mx-auto border border-[#302E31]">
+            <PackageX className="w-8 h-8 stroke-[1.5]" />
           </div>
-          <h3 className="text-base sm:text-lg font-bold text-[#F5F0E7]">कोई सामान नहीं मिला</h3>
-          <p className="text-xs text-[#817C77] leading-relaxed">
-            इस नाम या श्रेणी में कोई सामान नहीं मिला। कृपया दूसरा नाम लिखकर देखें या सभी फिल्टर हटाकर पूरा सामान देखें।
-          </p>
-          <button
-            onClick={onResetFilters}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 btn-gold-primary rounded-xl text-xs font-bold cursor-pointer shadow-sm"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>पूरा सामान देखें</span>
-          </button>
+          {searchQuery || selectedCategory ? (
+            <>
+              <h3 className="text-base sm:text-lg font-bold text-[#F5F0E7]">कोई सामान नहीं मिला</h3>
+              <p className="text-xs text-[#817C77] leading-relaxed">
+                इस नाम या श्रेणी में कोई सामान नहीं मिला। कृपया दूसरा नाम लिखकर देखें या सभी सामान देखें।
+              </p>
+              <button
+                onClick={onResetFilters}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 btn-gold-primary rounded-xl text-xs font-bold cursor-pointer shadow-sm"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>पूरा सामान देखें</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <h3 className="text-base sm:text-lg font-bold text-[#F5F0E7]">दुकान का नया सामान जल्द आ रहा है</h3>
+              <p className="text-xs text-[#817C77] leading-relaxed">
+                दुकानदार द्वारा सामान और आज के ताजा भाव जोड़े जा रहे हैं।
+              </p>
+              <p className="text-xs text-[#D2AC68] font-medium pt-1">
+                अगर आप दुकान के मालिक हैं, तो एडमिन पैनल में जाकर <strong>+ नया सामान जोड़ें</strong> पर क्लिक करें।
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
