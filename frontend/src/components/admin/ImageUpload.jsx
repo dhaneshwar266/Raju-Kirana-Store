@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Image as ImageIcon, UploadCloud, Loader2, CheckCircle2, Trash2, Sparkles, Link as LinkIcon } from 'lucide-react';
+import { Camera, Image as ImageIcon, Loader2, CheckCircle2, Trash2, Link as LinkIcon } from 'lucide-react';
 import { uploadImage } from '../../api/settings';
 import { getFullImageUrl } from '../../api/client';
 import { compressImage, formatBytes } from '../../utils/imageCompressor';
@@ -220,13 +220,7 @@ export default function ImageUpload({
             </button>
           </div>
 
-          {/* Automatic Size Optimization Banner */}
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#101014] border border-[#302E31] text-xs text-[#817C77]">
-            <Sparkles className="w-3.5 h-3.5 text-[#D2AC68] shrink-0" />
-            <span>
-              <strong className="text-[#B0AAA1]">ऑटो साइज कंट्रोल:</strong> कैमरा से खींची गई बड़ी फोटो अपने-आप छोटी (कम KB) होकर एकदम तेजी से अपलोड होगी।
-            </span>
-          </div>
+
 
           {/* Uploading Status Progress */}
           {uploading && (
