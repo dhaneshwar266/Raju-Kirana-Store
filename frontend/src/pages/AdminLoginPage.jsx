@@ -15,17 +15,17 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
     setError('');
 
     if (!identifier.trim() || !password.trim()) {
-      setError('कृपया यूजरनेम और पासवर्ड दोनों दर्ज करें।');
+      setError('Please enter both username and password.');
       return;
     }
 
     try {
       setSubmitting(true);
       await login(identifier.trim(), password.trim());
-      showToast({ type: 'success', title: 'नमस्ते राजू जी!', message: 'कंट्रोल रूम में आपका स्वागत है।' });
+      showToast({ type: 'success', title: 'Welcome Back!', message: 'Logged in successfully.' });
       onNavigate('admin-dashboard');
     } catch (err) {
-      setError(err.message || 'लॉगिन नहीं हो सका। कृपया सही यूजरनेम और पासवर्ड डालें।');
+      setError(err.message || 'Invalid username or password. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -43,10 +43,10 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
               onNavigate('home');
             }
           }}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#817C77] hover:text-[#D2AC68] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs font-bold text-[#817C77] hover:text-[#D2AC68] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>← ग्राहक वेबसाइट पर वापस जाएं</span>
+          <span>Back to Store</span>
         </button>
 
         {/* Header */}
@@ -54,9 +54,9 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
           <div className="w-14 h-14 rounded-2xl bg-[#202027] border border-[#302E31] text-[#D2AC68] flex items-center justify-center mx-auto shadow-sm">
             <Shield className="w-7 h-7 stroke-[1.75]" />
           </div>
-          <h1 className="text-2xl font-bold text-[#F5F0E7]">दुकानदार / मालिक लॉगिन</h1>
+          <h1 className="text-2xl font-bold text-[#F5F0E7]">Store Owner Login</h1>
           <p className="text-xs text-[#817C77]">
-            राजू किराना स्टोर का सामान और भाव बदलने के लिए लॉगिन करें।
+            Sign in to manage products, daily rates, and store settings.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-[#B0AAA1] block">
-              यूजरनेम (Username) या ईमेल
+              Username or Email
             </label>
             <div className="relative">
               <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#817C77]" />
@@ -90,7 +90,7 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-[#B0AAA1] block">
-              पासवर्ड (Password)
+              Password
             </label>
             <div className="relative">
               <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#817C77]" />
@@ -111,15 +111,15 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
             disabled={submitting}
             className="w-full py-3.5 btn-gold-primary disabled:opacity-50 text-sm font-bold rounded-xl shadow-md transition-all cursor-pointer mt-3"
           >
-            {submitting ? 'जांच हो रही है...' : 'लॉगिन करें (Sign In)'}
+            {submitting ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Helpful Hindi guidance for the owner */}
+        {/* Helpful guidance for the owner */}
         <div className="p-3.5 bg-[#101014] rounded-xl border border-[#302E31] text-xs text-[#817C77] space-y-1">
-          <p className="font-bold text-[#D2AC68]">दुकानदार सहायता:</p>
+          <p className="font-bold text-[#D2AC68]">Need Help?</p>
           <p>
-            यदि पासवर्ड भूल गए हैं, तो दुकान के कंप्यूटर पर पासवर्ड रीसेट किया जा सकता है।
+            Forgot your password? Reset it using the server terminal or contact admin support.
           </p>
         </div>
       </div>
