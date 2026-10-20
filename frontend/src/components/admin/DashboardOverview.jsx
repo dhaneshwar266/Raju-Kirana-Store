@@ -58,7 +58,7 @@ export default function DashboardOverview({
           className="px-5 py-3 btn-gold-primary rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer shrink-0"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
-          <span>+ नया सामान जोड़ें (Add Item)</span>
+          <span>Add Item</span>
         </button>
       </div>
 

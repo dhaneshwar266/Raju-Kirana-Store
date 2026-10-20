@@ -134,7 +134,7 @@ export default function ProductList({
               title="दुकान के सभी पुराने सामान एक साथ हटाएं"
             >
               <Trash2 className="w-4 h-4" />
-              <span>{clearing ? 'हटाया जा रहा है...' : 'सभी पुराने सामान हटाएं (Clear All)'}</span>
+              <span>{clearing ? 'Clearing...' : 'Clear All Products'}</span>
             </button>
           )}
 
@@ -143,7 +143,7 @@ export default function ProductList({
             className="px-5 py-2.5 btn-gold-primary rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
-            <span>+ नया सामान जोड़ें (Add Product)</span>
+            <span>Add Product</span>
           </button>
         </div>
       </div>

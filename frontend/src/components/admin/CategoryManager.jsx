@@ -125,7 +125,7 @@ export default function CategoryManager({ categories = [], onRefresh, showToast 
             className="px-5 py-3 btn-gold-primary rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer shrink-0"
           >
             <Plus className="w-5 h-5" />
-            <span>+ नई श्रेणी जोड़ें (Add Category)</span>
+            <span>Add Category</span>
           </button>
         )}
       </div>
