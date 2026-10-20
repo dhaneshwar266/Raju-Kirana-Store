@@ -329,7 +329,7 @@ export default function ProductFormModal({
               disabled={saving}
               className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-[#B0AAA1] hover:text-[#F5F0E7] hover:bg-[#202027] rounded-xl transition-colors cursor-pointer border border-[#302E31]"
             >
-              रद्द करें (Cancel)
+              Cancel
             </button>
 
             <button
@@ -340,12 +340,12 @@ export default function ProductFormModal({
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>सुरक्षित हो रहा है...</span>
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>{isEditing ? 'बदलाव सुरक्षित करें (Save Changes)' : 'दुकान में जोड़ें (Save Product)'}</span>
+                  <span>{isEditing ? 'Save Changes' : 'Save Product'}</span>
                 </>
               )}
             </button>

@@ -205,14 +205,14 @@ export default function CategoryManager({ categories = [], onRefresh, showToast 
               onClick={resetForm}
               className="px-4 py-2 text-xs sm:text-sm font-semibold text-[#B0AAA1] hover:text-[#F5F0E7] hover:bg-[#202027] rounded-xl cursor-pointer"
             >
-              रद्द करें (Cancel)
+              Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
               className="px-6 py-2.5 btn-gold-primary rounded-xl text-xs sm:text-sm font-bold shadow-sm cursor-pointer disabled:opacity-50"
             >
-              {submitting ? 'सुरक्षित हो रहा है...' : editingCategory ? 'बदलाव सुरक्षित करें' : 'नई श्रेणी बनाएं'}
+              {submitting ? 'Saving...' : editingCategory ? 'Save Changes' : 'Save Category'}
             </button>
           </div>
         </form>
