@@ -166,12 +166,6 @@ export default function ProductsPage({
           ) : (
             <>
               <h3 className="text-base sm:text-lg font-bold text-[#F5F0E7]">दुकान का नया सामान जल्द आ रहा है</h3>
-              <p className="text-xs text-[#817C77] leading-relaxed">
-                दुकानदार द्वारा सामान और आज के ताजा भाव जोड़े जा रहे हैं।
-              </p>
-              <p className="text-xs text-[#D2AC68] font-medium pt-1">
-                अगर आप दुकान के मालिक हैं, तो एडमिन पैनल में जाकर <strong>+ नया सामान जोड़ें</strong> पर क्लिक करें।
-              </p>
             </>
           )}
         </div>
