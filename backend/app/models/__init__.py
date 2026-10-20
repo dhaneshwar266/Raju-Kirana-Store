@@ -4,6 +4,7 @@ from app.models.category import Category
 from app.models.product import Product
 from app.models.price_option import ProductPriceOption
 from app.models.store_settings import StoreSettings
+from app.models.uploaded_file import UploadedFile
 
 __all__ = [
     "Base",
@@ -12,4 +13,5 @@ __all__ = [
     "Product",
     "ProductPriceOption",
     "StoreSettings",
+    "UploadedFile",
 ]

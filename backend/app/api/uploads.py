@@ -3,8 +3,11 @@ import uuid
 from PIL import Image
 import io
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
+from sqlalchemy.orm import Session
 from app.config import settings
 from app.models.user import AdminUser
+from app.models.uploaded_file import UploadedFile
+from app.database import get_db
 from app.api.deps import get_current_admin
 
 router = APIRouter(prefix="/upload", tags=["Uploads"])
@@ -14,6 +17,7 @@ router = APIRouter(prefix="/upload", tags=["Uploads"])
 async def upload_image(
     file: UploadFile = File(...),
     current_admin: AdminUser = Depends(get_current_admin),
+    db: Session = Depends(get_db),
 ):
     # Validate content type
     if file.content_type not in settings.ALLOWED_IMAGE_TYPES:
@@ -52,6 +56,18 @@ async def upload_image(
 
     with open(dest_path, "wb") as f:
         f.write(optimized_contents)
+
+    # Persist in DB so it survives cloud container restarts
+    try:
+        new_db_file = UploadedFile(
+            filename=safe_filename,
+            content_type="image/jpeg",
+            data=optimized_contents,
+        )
+        db.add(new_db_file)
+        db.commit()
+    except Exception:
+        db.rollback()
 
     return {
         "url": f"/uploads/{safe_filename}",

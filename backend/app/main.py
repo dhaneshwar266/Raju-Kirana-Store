@@ -56,8 +56,36 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 
-# Mount persistent static uploads
+# Persistent uploads directory
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+
+from fastapi.responses import FileResponse
+from app.models.uploaded_file import UploadedFile
+from app.database import get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException
+
+
+@app.get("/uploads/{filename}")
+async def serve_uploaded_image(filename: str, db: Session = Depends(get_db)):
+    # 1. Fast local disk check
+    file_path = os.path.join(settings.UPLOAD_DIR, filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+
+    # 2. Database persistent fallback (survives cloud container restarts)
+    db_file = db.query(UploadedFile).filter(UploadedFile.filename == filename).first()
+    if db_file:
+        try:
+            with open(file_path, "wb") as f:
+                f.write(db_file.data)
+        except Exception:
+            pass
+        return Response(content=db_file.data, media_type=db_file.content_type)
+
+    raise HTTPException(status_code=404, detail="Image not found")
+
+
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 # Include Routers under /api
