@@ -184,19 +184,14 @@ export default function ImageUpload({
               type="button"
               onClick={() => cameraInputRef.current?.click()}
               disabled={uploading}
-              className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 p-4 rounded-2xl bg-[#17171C] hover:bg-[#202027] border-2 border-dashed border-[#D2AC68]/60 hover:border-[#D2AC68] transition-all cursor-pointer text-left group shadow-sm disabled:opacity-50"
+              className="flex items-center justify-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#17171C] hover:bg-[#202027] border-2 border-dashed border-[#D2AC68]/60 hover:border-[#D2AC68] transition-all cursor-pointer group shadow-sm disabled:opacity-50"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#202027] group-hover:bg-[#D2AC68] text-[#D2AC68] group-hover:text-[#0A0A0C] flex items-center justify-center shrink-0 transition-colors shadow-xs">
-                <Camera className="w-6 h-6 stroke-[2]" />
+              <div className="w-10 h-10 rounded-xl bg-[#202027] group-hover:bg-[#D2AC68] text-[#D2AC68] group-hover:text-[#0A0A0C] flex items-center justify-center shrink-0 transition-colors shadow-xs">
+                <Camera className="w-5 h-5 stroke-[2]" />
               </div>
-              <div>
-                <span className="text-sm font-bold block text-[#F5F0E7] group-hover:text-[#E8CA91]">
-                  📷 कैमरा से फोटो खींचें
-                </span>
-                <span className="text-xs text-[#817C77] block mt-0.5">
-                  सीधा फोन का कैमरा खोलें और सामान की फोटो लें
-                </span>
-              </div>
+              <span className="text-sm font-bold text-[#F5F0E7] group-hover:text-[#E8CA91]">
+                📷 कैमरा से फोटो खींचें
+              </span>
             </button>
 
             {/* Gallery / File Picker Button */}
@@ -204,19 +199,14 @@ export default function ImageUpload({
               type="button"
               onClick={() => galleryInputRef.current?.click()}
               disabled={uploading}
-              className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 p-4 rounded-2xl bg-[#17171C] hover:bg-[#202027] border-2 border-dashed border-[#302E31] hover:border-[#D2AC68]/50 transition-all cursor-pointer text-left group shadow-sm disabled:opacity-50"
+              className="flex items-center justify-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#17171C] hover:bg-[#202027] border-2 border-dashed border-[#302E31] hover:border-[#D2AC68]/50 transition-all cursor-pointer group shadow-sm disabled:opacity-50"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#202027] group-hover:bg-[#302E31] text-[#B0AAA1] group-hover:text-[#D2AC68] flex items-center justify-center shrink-0 transition-colors shadow-xs">
-                <ImageIcon className="w-6 h-6 stroke-[1.8]" />
+              <div className="w-10 h-10 rounded-xl bg-[#202027] group-hover:bg-[#302E31] text-[#B0AAA1] group-hover:text-[#D2AC68] flex items-center justify-center shrink-0 transition-colors shadow-xs">
+                <ImageIcon className="w-5 h-5 stroke-[1.8]" />
               </div>
-              <div>
-                <span className="text-sm font-bold block text-[#F5F0E7] group-hover:text-[#E8CA91]">
-                  📁 गैलरी / फाइल से चुनें
-                </span>
-                <span className="text-xs text-[#817C77] block mt-0.5">
-                  फोन की गैलरी या मेमोरी से पहले से रखी फोटो चुनें
-                </span>
-              </div>
+              <span className="text-sm font-bold text-[#F5F0E7] group-hover:text-[#E8CA91]">
+                📁 गैलरी / फाइल से चुनें
+              </span>
             </button>
           </div>
 
