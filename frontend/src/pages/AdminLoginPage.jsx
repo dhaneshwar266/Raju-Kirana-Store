@@ -36,7 +36,13 @@ export default function AdminLoginPage({ onNavigate, showToast }) {
       <div className="bg-[#17171C] rounded-2xl border border-[#302E31] midnight-card-shadow max-w-md w-full p-8 space-y-6">
         {/* Back link */}
         <button
-          onClick={() => onNavigate('home')}
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              onNavigate('home');
+            }
+          }}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-[#817C77] hover:text-[#D2AC68] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />

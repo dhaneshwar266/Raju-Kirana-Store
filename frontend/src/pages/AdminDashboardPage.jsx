@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   Package,
@@ -41,6 +41,77 @@ export default function AdminDashboardPage({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScaleCalcOpen, setIsScaleCalcOpen] = useState(false);
 
+  // Refs for modal history
+  const isClosingAdminModalViaUiRef = useRef(false);
+  const isModalOpenRef = useRef(isModalOpen);
+  const isScaleCalcOpenRef = useRef(isScaleCalcOpen);
+
+  useEffect(() => {
+    isModalOpenRef.current = isModalOpen;
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    isScaleCalcOpenRef.current = isScaleCalcOpen;
+  }, [isScaleCalcOpen]);
+
+  const handleOpenAddModal = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
+    window.history.pushState({ adminModal: 'productForm' }, '');
+  };
+
+  const handleOpenEditModal = (product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+    window.history.pushState({ adminModal: 'productForm' }, '');
+  };
+
+  const handleCloseModal = () => {
+    if (isModalOpenRef.current) {
+      isClosingAdminModalViaUiRef.current = true;
+      setIsModalOpen(false);
+      setEditingProduct(null);
+      if (window.history.state && window.history.state.adminModal === 'productForm') {
+        window.history.back();
+      }
+    }
+  };
+
+  const handleOpenAdminCalc = () => {
+    setIsScaleCalcOpen(true);
+    window.history.pushState({ adminModal: 'scaleCalc' }, '');
+  };
+
+  const handleCloseAdminCalc = () => {
+    if (isScaleCalcOpenRef.current) {
+      isClosingAdminModalViaUiRef.current = true;
+      setIsScaleCalcOpen(false);
+      if (window.history.state && window.history.state.adminModal === 'scaleCalc') {
+        window.history.back();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isClosingAdminModalViaUiRef.current) {
+        isClosingAdminModalViaUiRef.current = false;
+        return;
+      }
+      if (isModalOpenRef.current) {
+        setIsModalOpen(false);
+        setEditingProduct(null);
+        return;
+      }
+      if (isScaleCalcOpenRef.current) {
+        setIsScaleCalcOpen(false);
+        return;
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -64,16 +135,6 @@ export default function AdminDashboardPage({
     fetchDashboardData();
   }, []);
 
-  const handleOpenAddModal = () => {
-    setEditingProduct(null);
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEditModal = (product) => {
-    setEditingProduct(product);
-    setIsModalOpen(true);
-  };
-
   const handleSaveProduct = async (productData, productId) => {
     try {
       if (productId) {
@@ -91,8 +152,7 @@ export default function AdminDashboardPage({
           message: `"${productData.name}" को दुकान की सूची में जोड़ दिया गया है।`,
         });
       }
-      setIsModalOpen(false);
-      setEditingProduct(null);
+      handleCloseModal();
       await fetchDashboardData();
     } catch (err) {
       showToast({
@@ -139,7 +199,7 @@ export default function AdminDashboardPage({
             {/* Header Right Actions */}
             <div className="flex items-center gap-2.5">
               <button
-                onClick={() => setIsScaleCalcOpen(true)}
+                onClick={handleOpenAdminCalc}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#D2AC68] hover:bg-[#E8CA91] text-[#0A0A0C] transition-colors cursor-pointer shadow-xs"
                 title="कांटा कैलकुलेटर (₹ से ग्राम तौलें)"
               >
@@ -278,10 +338,7 @@ export default function AdminDashboardPage({
           product={editingProduct}
           categories={categories}
           onSave={handleSaveProduct}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingProduct(null);
-          }}
+          onClose={handleCloseModal}
           showToast={showToast}
           currencySymbol={storeSettings?.currency_symbol || '₹'}
         />
@@ -291,7 +348,7 @@ export default function AdminDashboardPage({
       {isScaleCalcOpen && (
         <ScaleCalculatorModal
           products={products}
-          onClose={() => setIsScaleCalcOpen(false)}
+          onClose={handleCloseAdminCalc}
           storeSettings={storeSettings}
         />
       )}

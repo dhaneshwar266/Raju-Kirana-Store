@@ -24,6 +24,17 @@ export default function ProductFormModal({
   const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   useEffect(() => {
     if (product) {
       setName(product.name || '');
@@ -154,7 +165,14 @@ export default function ProductFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0A0A0C]/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in text-[#F5F0E7]">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#0A0A0C]/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in text-[#F5F0E7]"
+    >
       <div className="bg-[#17171C] rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl border border-[#302E31] max-h-[90vh] flex flex-col my-auto">
         {/* Fixed Modal Header */}
         <div className="shrink-0 px-6 py-4 border-b border-[#302E31] flex items-center justify-between bg-[#101014]">

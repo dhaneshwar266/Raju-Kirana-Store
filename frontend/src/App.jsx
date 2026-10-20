@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -41,10 +41,28 @@ function AppContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Modal & Toast
+  // Modal & Toast State
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isScaleCalculatorOpen, setIsScaleCalculatorOpen] = useState(false);
   const [toast, setToast] = useState(null);
+
+  // Refs for state inside popstate event listeners without stale closures
+  const selectedProductRef = useRef(selectedProduct);
+  const isScaleCalculatorOpenRef = useRef(isScaleCalculatorOpen);
+  const selectedCategoryRef = useRef(selectedCategory);
+  const isClosingViaUiRef = useRef(false);
+
+  useEffect(() => {
+    selectedProductRef.current = selectedProduct;
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    isScaleCalculatorOpenRef.current = isScaleCalculatorOpen;
+  }, [isScaleCalculatorOpen]);
+
+  useEffect(() => {
+    selectedCategoryRef.current = selectedCategory;
+  }, [selectedCategory]);
 
   const showToast = (toastObj) => {
     setToast(toastObj);
@@ -100,16 +118,115 @@ function AppContent() {
     }
   }, [currentView, searchQuery, selectedCategory, inStockOnly, sortBy, currentPage]);
 
+  // Modal handlers with Browser History Back Button support
+  const handleOpenProductModal = (product) => {
+    setSelectedProduct(product);
+    window.history.pushState({ modal: 'product-detail', productId: product.id }, '');
+  };
+
+  const handleCloseProductModal = () => {
+    if (selectedProductRef.current) {
+      isClosingViaUiRef.current = true;
+      setSelectedProduct(null);
+      if (window.history.state && window.history.state.modal === 'product-detail') {
+        window.history.back();
+      }
+    }
+  };
+
+  const handleOpenCalculator = () => {
+    setIsScaleCalculatorOpen(true);
+    window.history.pushState({ modal: 'scale-calculator' }, '');
+  };
+
+  const handleCloseCalculator = () => {
+    if (isScaleCalculatorOpenRef.current) {
+      isClosingViaUiRef.current = true;
+      setIsScaleCalculatorOpen(false);
+      if (window.history.state && window.history.state.modal === 'scale-calculator') {
+        window.history.back();
+      }
+    }
+  };
+
+  const handleSelectCategory = (catId) => {
+    setSelectedCategory(catId);
+    setCurrentPage(1);
+    if (catId !== null) {
+      window.history.pushState({ category_id: catId }, '');
+    }
+  };
+
+  // Browser Back Button & Popstate Listener: ensures back button closes modals or returns to store
+  useEffect(() => {
+    if (!window.history.state) {
+      window.history.replaceState({ view: currentView }, '');
+    }
+
+    const handlePopState = (event) => {
+      // If user clicked the X button (which already triggered history.back()), skip
+      if (isClosingViaUiRef.current) {
+        isClosingViaUiRef.current = false;
+        return;
+      }
+
+      // 1. If product detail modal is open, CLOSE IT and stay on website!
+      if (selectedProductRef.current) {
+        setSelectedProduct(null);
+        return;
+      }
+
+      // 2. If scale calculator modal is open, CLOSE IT and stay on website!
+      if (isScaleCalculatorOpenRef.current) {
+        setIsScaleCalculatorOpen(false);
+        return;
+      }
+
+      // 3. Category history sync
+      if (event.state && event.state.category_id !== undefined) {
+        setSelectedCategory(event.state.category_id);
+        return;
+      } else if (selectedCategoryRef.current !== null) {
+        setSelectedCategory(null);
+        return;
+      }
+
+      // 4. View sync based on browser URL
+      const path = window.location.pathname;
+      if (path.startsWith('/admin/login')) {
+        setCurrentView('admin-login');
+      } else if (path.startsWith('/admin')) {
+        setCurrentView(isAuthenticated ? 'admin-dashboard' : 'admin-login');
+      } else {
+        setCurrentView('products');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isAuthenticated]);
+
   // Handle navigation
   const handleNavigate = (view, extraParams = {}) => {
     if (extraParams.category_id !== undefined) {
       setSelectedCategory(extraParams.category_id);
     }
-    // Customer views always stay on the unified products & rate list
-    if (view === 'home' || view === 'categories' || view === 'contact' || view === 'products') {
-      setCurrentView('products');
+
+    if (view === 'admin-login') {
+      if (window.location.pathname !== '/admin/login') {
+        window.history.pushState({ view: 'admin-login' }, '', '/admin/login');
+      }
+      setCurrentView('admin-login');
+    } else if (view === 'admin-dashboard') {
+      if (window.location.pathname !== '/admin') {
+        window.history.pushState({ view: 'admin-dashboard' }, '', '/admin');
+      }
+      setCurrentView('admin-dashboard');
     } else {
-      setCurrentView(view);
+      if (window.location.pathname !== '/') {
+        window.history.pushState({ view: 'products' }, '', '/');
+      }
+      setCurrentView('products');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -156,7 +273,7 @@ function AppContent() {
         onSearchChange={setSearchQuery}
         activeView={currentView}
         onNavigate={handleNavigate}
-        onOpenCalculator={() => setIsScaleCalculatorOpen(true)}
+        onOpenCalculator={handleOpenCalculator}
       />
 
       {/* Main Content Area: Purely the Products & Daily Rates Page */}
@@ -178,10 +295,7 @@ function AppContent() {
               setCurrentPage(1);
             }}
             selectedCategory={selectedCategory}
-            onSelectCategory={(catId) => {
-              setSelectedCategory(catId);
-              setCurrentPage(1);
-            }}
+            onSelectCategory={handleSelectCategory}
             inStockOnly={inStockOnly}
             onToggleInStockOnly={(val) => {
               setInStockOnly(val);
@@ -195,10 +309,10 @@ function AppContent() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
-            onSelectProduct={setSelectedProduct}
+            onSelectProduct={handleOpenProductModal}
             storeSettings={storeSettings}
             onResetFilters={handleResetFilters}
-            onOpenCalculator={() => setIsScaleCalculatorOpen(true)}
+            onOpenCalculator={handleOpenCalculator}
           />
         )}
       </main>
@@ -218,20 +332,20 @@ function AppContent() {
         />
       )}
 
-      {/* Product Details Rates Modal */}
+      {/* Product Details Rates Modal with Back Button Support */}
       {selectedProduct && (
         <ProductDetailModal
           product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+          onClose={handleCloseProductModal}
           storeSettings={storeSettings}
         />
       )}
 
-      {/* Scale Calculator Modal (₹ to Grams) */}
+      {/* Scale Calculator Modal (₹ to Grams) with Back Button Support */}
       {isScaleCalculatorOpen && (
         <ScaleCalculatorModal
           products={products}
-          onClose={() => setIsScaleCalculatorOpen(false)}
+          onClose={handleCloseCalculator}
           storeSettings={storeSettings}
         />
       )}
