@@ -39,8 +39,15 @@ class Settings(BaseSettings):
         "UPLOAD_DIR",
         os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "uploads")),
     )
-    MAX_IMAGE_SIZE_BYTES: int = 5 * 1024 * 1024  # 5 MB
-    ALLOWED_IMAGE_TYPES: List[str] = ["image/jpeg", "image/png", "image/webp", "image/avif"]
+    MAX_IMAGE_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB maximum safety limit
+    ALLOWED_IMAGE_TYPES: List[str] = [
+        "image/jpeg",
+        "image/jpg",
+        "image/pjpeg",
+        "image/png",
+        "image/webp",
+        "image/avif",
+    ]
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

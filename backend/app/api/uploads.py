@@ -30,29 +30,31 @@ async def upload_image(
             detail=f"Image file size exceeds maximum limit of 5 MB.",
         )
 
-    # Validate image with Pillow to ensure it's not corrupt or malicious
+    # Validate and optimize image with Pillow
     try:
-        image = Image.open(io.BytesIO(contents))
-        image.verify()
+        raw_io = io.BytesIO(contents)
+        image = Image.open(raw_io)
+        if image.mode in ("RGBA", "P"):
+            image = image.convert("RGB")
+        # Resize if dimensions exceed 1200x1200
+        image.thumbnail((1200, 1200), Image.Resampling.LANCZOS)
+        out_io = io.BytesIO()
+        image.save(out_io, format="JPEG", quality=82, optimize=True)
+        optimized_contents = out_io.getvalue()
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Uploaded file is not a valid or readable image.",
         )
 
-    # Determine extension
-    ext = os.path.splitext(file.filename or "")[1].lower()
-    if ext not in [".jpg", ".jpeg", ".png", ".webp", ".avif"]:
-        ext = ".webp" if file.content_type == "image/webp" else ".jpg"
-
-    safe_filename = f"{uuid.uuid4().hex}{ext}"
+    safe_filename = f"{uuid.uuid4().hex}.jpg"
     dest_path = os.path.join(settings.UPLOAD_DIR, safe_filename)
 
     with open(dest_path, "wb") as f:
-        f.write(contents)
+        f.write(optimized_contents)
 
     return {
         "url": f"/uploads/{safe_filename}",
         "filename": safe_filename,
-        "size": len(contents),
+        "size": len(optimized_contents),
     }
