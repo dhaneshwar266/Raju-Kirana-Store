@@ -102,6 +102,14 @@ app.include_router(store_settings.router, prefix=settings.API_V1_STR)
 app.include_router(uploads.router, prefix=settings.API_V1_STR)
 app.include_router(admin.router, prefix=settings.API_V1_STR)
 
+# Also include directly without /api prefix for rewrite compatibility
+app.include_router(auth.router)
+app.include_router(categories.router)
+app.include_router(products.router)
+app.include_router(store_settings.router)
+app.include_router(uploads.router)
+app.include_router(admin.router)
+
 
 @app.get(f"{settings.API_V1_STR}/health", tags=["Health"])
 def health_check():
