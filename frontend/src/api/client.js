@@ -1,7 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL
-  ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '')
-  : '';
+const isDev = import.meta.env.DEV;
+let rawBase = import.meta.env.VITE_API_BASE_URL || '';
+if (rawBase.includes('onrender.com')) {
+  rawBase = isDev ? 'http://127.0.0.1:8000' : '';
+} else if (!rawBase && isDev) {
+  rawBase = 'http://127.0.0.1:8000';
+}
 
+const API_BASE = rawBase.replace(/\/$/, '');
 const BASE_URL = `${API_BASE}/api`;
 
 export function getFullImageUrl(url) {
