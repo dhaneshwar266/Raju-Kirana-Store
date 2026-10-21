@@ -56,20 +56,24 @@ def seed_database(db: Session):
         db.add(store_settings)
         db.commit()
 
-    # 3. Seed Default Admin if specified via environment or none exists
-    admin_count = db.query(AdminUser).count()
-    if admin_count == 0:
-        admin_user = os.getenv("FIRST_ADMIN_USERNAME", "admin")
+    # 3. Seed Default Admin or Reset Password via Environment Variable
+    admin_user = os.getenv("FIRST_ADMIN_USERNAME", "admin")
+    admin = db.query(AdminUser).filter(AdminUser.username == admin_user).first() or db.query(AdminUser).first()
+    reset_pass = os.getenv("RESET_ADMIN_PASSWORD")
+    if admin and reset_pass and len(reset_pass.strip()) >= 6:
+        admin.hashed_password = get_password_hash(reset_pass.strip())
+        db.commit()
+    elif not admin:
         admin_email = os.getenv("FIRST_ADMIN_EMAIL", "admin@rajukirana.local")
         admin_pass = os.getenv("FIRST_ADMIN_PASSWORD", "RajuKirana@2026")
-        admin = AdminUser(
+        new_admin = AdminUser(
             username=admin_user,
             email=admin_email,
             hashed_password=get_password_hash(admin_pass),
             full_name="Raju Kirana Owner",
             is_active=True,
         )
-        db.add(admin)
+        db.add(new_admin)
         db.commit()
 
     # 4. Seed realistic sample products only if explicitly requested
