@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Sparkles, Scale, Package, ChevronRight, AlertCircle } from 'lucide-react';
 import { getFullImageUrl } from '../api/client';
 
@@ -8,6 +8,12 @@ export default function ProductCard({ product, onSelect, currencySymbol = '₹' 
 
   // Local active option selection for instant price preview on the card
   const [selectedOpt, setSelectedOpt] = useState(defaultOption || null);
+
+  // Keep selected option in sync with product changes (e.g. when default option is toggled in admin)
+  useEffect(() => {
+    const curDefault = (product?.price_options || []).find((o) => o.is_default) || (product?.price_options || [])[0];
+    setSelectedOpt(curDefault || null);
+  }, [product]);
 
   const isAvailable = product.is_available;
   const activePrice = selectedOpt ? parseFloat(selectedOpt.price) : 0;
@@ -111,10 +117,10 @@ export default function ProductCard({ product, onSelect, currencySymbol = '₹' 
             </span>
             <div className="flex flex-wrap gap-1.5">
               {options.slice(0, 3).map((opt) => {
-                const isActive = selectedOpt?.id === opt.id;
+                const isActive = (selectedOpt?.id && opt.id) ? selectedOpt.id === opt.id : selectedOpt?.unit_label === opt.unit_label;
                 return (
                   <button
-                    key={opt.id}
+                    key={opt.id || opt.unit_label}
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();

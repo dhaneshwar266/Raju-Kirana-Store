@@ -89,6 +89,10 @@ def test_create_weight_based_product_pricing(client, auth_headers):
     assert len(data["price_options"]) == 3
     assert float(data["price_options"][0]["price"]) == 32.00
     assert float(data["price_options"][2]["price"]) == 120.00
+    # Exactly option index 2 (1 kg) must be default, NOT option index 0 (1 pav)
+    assert data["price_options"][0]["is_default"] is False
+    assert data["price_options"][1]["is_default"] is False
+    assert data["price_options"][2]["is_default"] is True
 
 
 def test_create_small_quantity_spice_pricing(client, auth_headers):

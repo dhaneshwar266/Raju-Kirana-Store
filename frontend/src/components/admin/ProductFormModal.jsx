@@ -121,6 +121,10 @@ export default function ProductFormModal({
       }
     }
 
+    // Determine the exact index the user selected as default
+    const userDefaultIndex = priceOptions.findIndex((opt) => opt.is_default);
+    const resolvedDefaultIndex = userDefaultIndex >= 0 ? userDefaultIndex : 0;
+
     const payload = {
       name: name.trim(),
       brand: brand.trim() || null,
@@ -135,7 +139,7 @@ export default function ProductFormModal({
         quantity_value: opt.quantity_value !== null && opt.quantity_value !== '' ? parseFloat(opt.quantity_value) : null,
         quantity_unit: opt.quantity_unit?.trim() || null,
         price: parseFloat(opt.price),
-        is_default: opt.is_default || i === 0,
+        is_default: i === resolvedDefaultIndex,
         sort_order: i + 1,
       })),
     };
@@ -151,6 +155,9 @@ export default function ProductFormModal({
   };
 
   // Virtual product object for live preview
+  const previewDefaultIndex = priceOptions.findIndex((opt) => opt.is_default);
+  const resolvedPreviewDefault = previewDefaultIndex >= 0 ? previewDefaultIndex : 0;
+
   const previewProduct = {
     id: 9999,
     name: name || 'सामान का नाम (उदा: आटा)',
@@ -161,7 +168,13 @@ export default function ProductFormModal({
     image_url: imageUrl || null,
     is_available: isAvailable,
     is_featured: false,
-    price_options: priceOptions.length > 0 ? priceOptions : [{ unit_label: '1 kg', price: 0, is_default: true }],
+    price_options:
+      priceOptions.length > 0
+        ? priceOptions.map((opt, i) => ({
+            ...opt,
+            is_default: i === resolvedPreviewDefault,
+          }))
+        : [{ unit_label: '1 kg', price: 0, is_default: true }],
   };
 
   return (

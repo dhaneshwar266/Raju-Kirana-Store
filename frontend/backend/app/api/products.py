@@ -177,7 +177,15 @@ def create_product(
     db.add(product)
     db.flush()  # get product.id
 
-    has_explicit_default = any(opt.is_default for opt in product_in.price_options)
+    # Determine the single default option (exactly one option must be default)
+    true_indices = [i for i, o in enumerate(product_in.price_options) if o.is_default]
+    if len(true_indices) > 1 and any(i > 0 for i in true_indices):
+        default_idx = next(i for i in true_indices if i > 0)
+    elif len(true_indices) == 1:
+        default_idx = true_indices[0]
+    else:
+        default_idx = 0
+
     for idx, opt in enumerate(product_in.price_options):
         price_opt = ProductPriceOption(
             product_id=product.id,
@@ -185,7 +193,7 @@ def create_product(
             quantity_value=opt.quantity_value,
             quantity_unit=opt.quantity_unit.strip() if opt.quantity_unit else None,
             price=opt.price,
-            is_default=bool(opt.is_default) if has_explicit_default else (idx == 0),
+            is_default=(idx == default_idx),
             sort_order=opt.sort_order if opt.sort_order != 0 else idx,
         )
         db.add(price_opt)
@@ -248,7 +256,15 @@ def update_product(
         # Remove old options
         db.query(ProductPriceOption).filter(ProductPriceOption.product_id == product.id).delete()
         # Insert new options
-        has_explicit_default = any(opt.is_default for opt in product_in.price_options)
+        # Determine the single default option (exactly one option must be default)
+        true_indices = [i for i, o in enumerate(product_in.price_options) if o.is_default]
+        if len(true_indices) > 1 and any(i > 0 for i in true_indices):
+            default_idx = next(i for i in true_indices if i > 0)
+        elif len(true_indices) == 1:
+            default_idx = true_indices[0]
+        else:
+            default_idx = 0
+
         for idx, opt in enumerate(product_in.price_options):
             price_opt = ProductPriceOption(
                 product_id=product.id,
@@ -256,7 +272,7 @@ def update_product(
                 quantity_value=opt.quantity_value,
                 quantity_unit=opt.quantity_unit.strip() if opt.quantity_unit else None,
                 price=opt.price,
-                is_default=bool(opt.is_default) if has_explicit_default else (idx == 0),
+                is_default=(idx == default_idx),
                 sort_order=opt.sort_order if opt.sort_order != 0 else idx,
             )
             db.add(price_opt)

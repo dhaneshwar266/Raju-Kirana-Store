@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Check, AlertCircle, ShoppingBag, Tag, Scale, Package, Layers, Sparkles } from 'lucide-react';
 import WhatsAppButton from './WhatsAppButton';
 import { getPricePerGram, formatGramsToScaleText, calculateGramsForRupees } from '../utils/scaleCalculator';
@@ -11,6 +11,12 @@ export default function ProductDetailModal({ product, onClose, storeSettings }) 
   const defaultOption = options.find((o) => o.is_default) || options[0];
   const [selectedOption, setSelectedOption] = useState(defaultOption || null);
   const [calcRupees, setCalcRupees] = useState('15');
+
+  // Keep selected option synced when product changes
+  useEffect(() => {
+    const curDef = (product?.price_options || []).find((o) => o.is_default) || (product?.price_options || [])[0];
+    setSelectedOption(curDef || null);
+  }, [product]);
 
   const currency = storeSettings?.currency_symbol || '₹';
   const whatsappNumber = storeSettings?.whatsapp_number;
