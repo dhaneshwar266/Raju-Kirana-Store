@@ -1,38 +1,60 @@
 import sys
 import os
+from http.server import BaseHTTPRequestHandler
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-root_candidates = [
-    os.path.abspath(os.path.join(current_dir, "..")),
-    os.path.abspath(os.path.join(current_dir, "..", "..")),
-    current_dir,
+backend_candidates = [
+    os.path.join(current_dir, "backend"),
+    os.path.join(current_dir, "..", "backend"),
+    os.path.join(current_dir, "..", "frontend", "backend"),
 ]
+for b in backend_candidates:
+    if os.path.exists(b) and b not in sys.path:
+        sys.path.insert(0, b)
 
-for r in root_candidates:
-    backend_path = os.path.join(r, "backend")
-    if os.path.exists(backend_path) and backend_path not in sys.path:
-        sys.path.insert(0, backend_path)
-    if os.path.exists(r) and r not in sys.path:
-        sys.path.insert(0, r)
+from app.main import app
+from fastapi.testclient import TestClient
 
-import traceback
+# Pre-initialize test client with app lifespan
+test_client = TestClient(app)
 
-try:
-    from app.main import app
-except Exception as e:
-    err_tb = traceback.format_exc()
-    print("FATAL IMPORT ERROR IN frontend/api/index.py:", err_tb, flush=True)
-    try:
-        from fastapi import FastAPI, Response
-        app = FastAPI()
-        @app.api_route("/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-        async def catch_all(full_path: str):
-            return Response(content=f"Backend Startup Exception:\n\n{err_tb}", media_type="text/plain", status_code=500)
-    except Exception:
-        def app(environ, start_response):
-            data = f"Backend Startup Exception:\n\n{err_tb}".encode("utf-8")
-            start_response("500 Internal Server Error", [
-                ("Content-Type", "text/plain; charset=utf-8"),
-                ("Content-Length", str(len(data)))
-            ])
-            return [data]
+def dispatch_to_fastapi(handler_instance, method: str):
+    # Determine the target endpoint path
+    path = handler_instance.path
+    if not path.startswith("/api"):
+        path = "/api" + path
+
+    headers = dict(handler_instance.headers)
+    content_length = int(headers.get("content-length", 0))
+    body = handler_instance.rfile.read(content_length) if content_length > 0 else None
+
+    # Forward to FastAPI app via TestClient
+    response = test_client.request(
+        method=method,
+        url=path,
+        content=body,
+        headers={k: v for k, v in headers.items() if k.lower() not in ["host", "content-length"]},
+    )
+
+    handler_instance.send_response(response.status_code)
+    for k, v in response.headers.items():
+        if k.lower() not in ["content-length", "transfer-encoding", "content-encoding"]:
+            handler_instance.send_header(k, v)
+    handler_instance.send_header("Access-Control-Allow-Origin", "*")
+    handler_instance.send_header("Content-Length", str(len(response.content)))
+    handler_instance.end_headers()
+    handler_instance.wfile.write(response.content)
+
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self): dispatch_to_fastapi(self, "GET")
+    def do_POST(self): dispatch_to_fastapi(self, "POST")
+    def do_PUT(self): dispatch_to_fastapi(self, "PUT")
+    def do_DELETE(self): dispatch_to_fastapi(self, "DELETE")
+    def do_PATCH(self): dispatch_to_fastapi(self, "PATCH")
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "*")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
