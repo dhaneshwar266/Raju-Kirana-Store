@@ -42,10 +42,12 @@ class Settings(BaseSettings):
         "http://127.0.0.1:4173",
     ]
 
-    # Persistent uploads directory
+    # Persistent uploads directory (uses /tmp on serverless like Vercel)
     UPLOAD_DIR: str = os.getenv(
         "UPLOAD_DIR",
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "uploads")),
+        "/tmp/uploads"
+        if (os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+        else os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "uploads")),
     )
     MAX_IMAGE_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB maximum safety limit
     ALLOWED_IMAGE_TYPES: List[str] = [

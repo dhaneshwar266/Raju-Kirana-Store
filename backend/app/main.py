@@ -13,13 +13,16 @@ from app.api import auth, categories, products, store_settings, uploads, admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: ensure tables exist and seed initial store data
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    # Startup: ensure tables exist and seed initial store data safely
     try:
-        seed_database(db)
-    finally:
-        db.close()
+        Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        try:
+            seed_database(db)
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"Database startup / migration warning: {e}")
     yield
     # Shutdown logic if any
 
@@ -56,8 +59,11 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 
-# Persistent uploads directory
-os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+# Persistent uploads directory (safe for read-only serverless filesystem)
+try:
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+except Exception:
+    pass
 
 from fastapi.responses import FileResponse
 from app.models.uploaded_file import UploadedFile
