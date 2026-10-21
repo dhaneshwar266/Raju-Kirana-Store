@@ -29,3 +29,14 @@ export async function logout() {
     localStorage.removeItem('raju_admin_user');
   }
 }
+
+export async function changePassword(currentPassword, newPassword) {
+  return await fetchApi('/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  });
+}
+

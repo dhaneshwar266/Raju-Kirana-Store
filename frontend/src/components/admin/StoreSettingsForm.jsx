@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Loader2, Store, Phone } from 'lucide-react';
+import { Save, Loader2, Store, Phone, Lock, KeyRound } from 'lucide-react';
 import { updateStoreSettings } from '../../api/settings';
+import { changePassword } from '../../api/auth';
 
 export default function StoreSettingsForm({
   storeSettings,
@@ -17,6 +18,12 @@ export default function StoreSettingsForm({
   const [description, setDescription] = useState('');
   const [currencySymbol, setCurrencySymbol] = useState('₹');
   const [saving, setSaving] = useState(false);
+
+  // Password change state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPass, setChangingPass] = useState(false);
 
   useEffect(() => {
     if (storeSettings) {
@@ -58,6 +65,35 @@ export default function StoreSettingsForm({
       showToast({ type: 'error', title: 'त्रुटि', message: err.message || 'दुकान की जानकारी सुरक्षित नहीं हो सकी।' });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentPassword) {
+      showToast({ type: 'error', title: 'पुराना पासवर्ड भरें', message: 'कृपया अपना वर्तमान पासवर्ड डालें।' });
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      showToast({ type: 'error', title: 'नया पासवर्ड 6+ अक्षर का हो', message: 'नया पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showToast({ type: 'error', title: 'पासवर्ड मेल नहीं खाया', message: 'नया पासवर्ड और कन्फर्म पासवर्ड एक जैसे होने चाहिए।' });
+      return;
+    }
+
+    try {
+      setChangingPass(true);
+      await changePassword(currentPassword, newPassword);
+      showToast({ type: 'success', title: 'पासवर्ड बदल गया! 🎉', message: 'आपका नया पासवर्ड सफलतापूर्वक सेव हो चुका है।' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      showToast({ type: 'error', title: 'त्रुटि', message: err.message || 'पासवर्ड नहीं बदला जा सका।' });
+    } finally {
+      setChangingPass(false);
     }
   };
 
@@ -230,6 +266,77 @@ export default function StoreSettingsForm({
           </button>
         </div>
       </form>
+
+      {/* Security & Password Change Card */}
+      <div className="bg-[#18181D] border border-[#302E31] rounded-2xl p-4 sm:p-6 shadow-xl">
+        <div className="flex items-center gap-3 border-b border-[#302E31] pb-4 mb-6">
+          <div className="p-2.5 rounded-xl bg-[#D2AC68]/10 text-[#D2AC68] border border-[#D2AC68]/20">
+            <KeyRound className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-[#F5F0E7]">
+              एडमिन पासवर्ड बदलें (Change Admin Password)
+            </h3>
+            <p className="text-xs text-[#817C77]">
+              अपना एडमिन लॉगिन पासवर्ड कभी भी यहाँ से आसानी से नया बदल सकते हैं।
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-xl">
+          <div className="space-y-1">
+            <label className="text-xs sm:text-sm font-semibold text-[#B0AAA1] block">
+              वर्तमान पासवर्ड (Current Password)
+            </label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="वर्तमान पुराना पासवर्ड डालें"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#101014] text-[#F5F0E7] placeholder-[#817C77] rounded-lg border border-[#302E31] focus:border-[#D2AC68] outline-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-xs sm:text-sm font-semibold text-[#B0AAA1] block">
+                नया पासवर्ड (New Password)
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="कम से कम 6 अक्षर"
+                className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#101014] text-[#F5F0E7] placeholder-[#817C77] rounded-lg border border-[#302E31] focus:border-[#D2AC68] outline-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs sm:text-sm font-semibold text-[#B0AAA1] block">
+                नया पासवर्ड दोबारा लिखें (Confirm)
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="नया पासवर्ड दोबारा डालें"
+                className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#101014] text-[#F5F0E7] placeholder-[#817C77] rounded-lg border border-[#302E31] focus:border-[#D2AC68] outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2 flex justify-start">
+            <button
+              type="submit"
+              disabled={changingPass}
+              className="px-6 py-2.5 bg-[#25252D] hover:bg-[#302E31] border border-[#D2AC68]/40 hover:border-[#D2AC68] text-[#D2AC68] text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              {changingPass ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+              <span>पासवर्ड अपडेट करें (Update Password)</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
