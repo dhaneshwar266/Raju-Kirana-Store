@@ -48,6 +48,16 @@ app.add_middleware(
 )
 
 
+@app.exception_handler(Exception)
+async def custom_global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    from fastapi.responses import PlainTextResponse
+    err = traceback.format_exc()
+    print("UNHANDLED SERVER EXCEPTION:", err, flush=True)
+    return PlainTextResponse(f"FastAPI Unhandled Server Exception:\n\n{err}", status_code=500)
+
+
+
 # Security Headers Middleware
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
