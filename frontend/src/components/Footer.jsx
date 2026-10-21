@@ -12,10 +12,10 @@ export default function Footer({ storeSettings, onNavigate }) {
   const mapsUrl = storeSettings?.google_maps_url || 'https://maps.app.goo.gl/3tPyDrjZFJjavukX8';
 
   return (
-    <footer className="bg-[#0A0A0C] text-[#B0AAA1] pt-8 pb-10 border-t border-[#302E31] mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <footer className="bg-[#0A0A0C] text-[#B0AAA1] pt-8 pb-10 border-t border-[#302E31] mt-auto w-full max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 w-full max-w-full overflow-hidden">
         {/* Main Footer Block */}
-        <div className="bg-[#121216] border border-[#302E31] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="bg-[#121216] border border-[#302E31] rounded-2xl p-5 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 w-full max-w-full overflow-hidden">
           {/* Store Info */}
           <div className="space-y-2">
             <div className="flex items-center gap-3">

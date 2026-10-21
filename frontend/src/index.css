@@ -18,11 +18,31 @@
     --error: #F08A83;
   }
 
+  html,
   body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-text-size-adjust: 100%;
     font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
 
   /* Editorial Display Headings */

@@ -8,7 +8,7 @@ export default function CategoryPills({
   onSelectCategory,
 }) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none scroll-smooth">
+    <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-none scroll-smooth w-full max-w-full min-w-0">
       {/* All Items Pill */}
       <button
         onClick={() => onSelectCategory(null)}

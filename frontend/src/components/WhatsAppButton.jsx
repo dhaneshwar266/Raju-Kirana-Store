@@ -40,7 +40,7 @@ export default function WhatsAppButton({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="राजू किराना स्टोर को व्हाट्सएप पर मैसेज करें"
-        className="fixed bottom-6 left-6 z-40 flex items-center gap-2.5 bg-[#17171C] hover:bg-[#202027] text-[#70C69A] hover:text-white px-4 py-3 rounded-full shadow-2xl border border-[#302E31] hover:border-[#70C69A]/50 transition-all duration-200 group text-xs font-bold"
+        className="fixed bottom-5 left-4 sm:bottom-6 sm:left-6 z-40 flex items-center gap-2 sm:gap-2.5 bg-[#17171C] hover:bg-[#202027] text-[#70C69A] hover:text-white px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-full shadow-2xl border border-[#302E31] hover:border-[#70C69A]/50 transition-all duration-200 group text-xs font-bold max-w-[calc(100vw-2rem)]"
       >
         <MessageCircle className="w-5 h-5 text-[#70C69A] shrink-0 group-hover:scale-110 transition-transform" />
         <span>व्हाट्सएप पर ऑर्डर करें</span>

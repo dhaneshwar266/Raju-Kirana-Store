@@ -30,21 +30,21 @@ export default function ProductsPage({
   const mapsUrl = storeSettings?.google_maps_url || 'https://maps.app.goo.gl/3tPyDrjZFJjavukX8';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-8 bg-[#0A0A0C] text-[#F5F0E7]">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-10 space-y-5 sm:space-y-8 bg-[#0A0A0C] text-[#F5F0E7] w-full max-w-full overflow-hidden">
       {/* Top Banner: Store Info & Daily Rates Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[#302E31]">
-        <div className="space-y-2">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-[#302E31] w-full max-w-full overflow-hidden">
+        <div className="space-y-2 min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D2AC68] bg-[#17171C] px-2.5 py-0.5 rounded border border-[#302E31]">
-              <Sparkles className="w-3 h-3 text-[#D2AC68]" />
-              पक्की भाव सूची • TODAY'S LIVE RATES
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D2AC68] bg-[#17171C] px-2.5 py-0.5 rounded border border-[#302E31] max-w-full">
+              <Sparkles className="w-3 h-3 text-[#D2AC68] shrink-0" />
+              <span>पक्की भाव सूची • TODAY'S LIVE RATES</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#70C69A] bg-[#101014] px-2.5 py-0.5 rounded border border-[#70C69A]/30">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#70C69A] bg-[#101014] px-2.5 py-0.5 rounded border border-[#70C69A]/30 shrink-0">
               दुकान का ताजा काउंटर भाव
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F5F0E7] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F5F0E7] tracking-tight break-words">
             दुकान का पूरा सामान एवं आज के ताजा भाव
           </h1>
 
@@ -53,24 +53,24 @@ export default function ProductsPage({
           </p>
 
           {/* Quick Info & Action Chips */}
-          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs">
+          <div className="flex items-center gap-2 flex-wrap pt-1 text-xs w-full max-w-full">
             <a
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#D2AC68] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#D2AC68] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors max-w-full"
             >
-              <MapPin className="w-3.5 h-3.5 text-[#D2AC68]" />
-              <span>{address}</span>
-              <Navigation className="w-3 h-3 text-[#D2AC68] ml-1" />
+              <MapPin className="w-3.5 h-3.5 text-[#D2AC68] shrink-0" />
+              <span className="truncate">{address}</span>
+              <Navigation className="w-3 h-3 text-[#D2AC68] ml-1 shrink-0" />
             </a>
 
             {phone && (
               <a
                 href={`tel:${phone}`}
-                className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#70C69A] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors font-semibold"
+                className="inline-flex items-center gap-1.5 bg-[#17171C] hover:bg-[#202027] text-[#B0AAA1] hover:text-[#70C69A] px-3 py-1.5 rounded-lg border border-[#302E31] transition-colors font-semibold shrink-0"
               >
-                <Phone className="w-3.5 h-3.5 text-[#70C69A]" />
+                <Phone className="w-3.5 h-3.5 text-[#70C69A] shrink-0" />
                 <span className="tabular-nums">कॉल करें: {phone}</span>
               </a>
             )}
@@ -79,10 +79,10 @@ export default function ProductsPage({
               <button
                 type="button"
                 onClick={onOpenCalculator}
-                className="inline-flex items-center gap-1.5 bg-[#D2AC68]/15 hover:bg-[#D2AC68]/25 text-[#E8CA91] px-3 py-1.5 rounded-lg border border-[#D2AC68]/40 transition-colors font-bold cursor-pointer"
+                className="inline-flex items-center gap-1.5 bg-[#D2AC68]/15 hover:bg-[#D2AC68]/25 text-[#E8CA91] px-3 py-1.5 rounded-lg border border-[#D2AC68]/40 transition-colors font-bold cursor-pointer max-w-full"
               >
-                <Scale className="w-3.5 h-3.5 text-[#D2AC68]" />
-                <span>₹10 / ₹15 कांटा कैलकुलेटर</span>
+                <Scale className="w-3.5 h-3.5 text-[#D2AC68] shrink-0" />
+                <span className="truncate">₹10 / ₹15 कांटा कैलकुलेटर</span>
               </button>
             )}
           </div>
@@ -95,7 +95,7 @@ export default function ProductsPage({
       </div>
 
       {/* Category Filter Horizontal Pills */}
-      <div className="bg-[#17171C] p-3 sm:p-4 rounded-2xl border border-[#302E31] midnight-card-shadow">
+      <div className="bg-[#17171C] p-2.5 sm:p-4 rounded-2xl border border-[#302E31] midnight-card-shadow w-full max-w-full overflow-hidden min-w-0">
         <CategoryPills
           categories={categories}
           selectedCategory={selectedCategory}
@@ -105,7 +105,7 @@ export default function ProductsPage({
 
       {/* Active filters summary */}
       {(searchQuery || selectedCategory !== null || inStockOnly) && (
-        <div className="flex items-center gap-2 flex-wrap text-xs text-[#B0AAA1] bg-[#17171C] p-3 rounded-xl border border-[#302E31]">
+        <div className="flex items-center gap-2 flex-wrap text-xs text-[#B0AAA1] bg-[#17171C] p-3 rounded-xl border border-[#302E31] w-full max-w-full overflow-hidden">
           <span className="font-bold text-[#D2AC68]">चुने हुए फिल्टर:</span>
           {searchQuery && (
             <span className="bg-[#101014] px-2.5 py-1 rounded-lg border border-[#302E31] text-[#F5F0E7] font-semibold">

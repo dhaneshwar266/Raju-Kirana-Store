@@ -265,7 +265,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0A0A0C] text-[#F5F0E7]">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#0A0A0C] text-[#F5F0E7]">
       {/* Public Store Header */}
       <Navbar
         storeSettings={storeSettings}
@@ -277,7 +277,7 @@ function AppContent() {
       />
 
       {/* Main Content Area: Purely the Products & Daily Rates Page */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {currentView === 'admin-login' ? (
           <AdminLoginPage
             onNavigate={handleNavigate}
