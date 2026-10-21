@@ -22,20 +22,22 @@ if db_url.startswith("postgresql://") and "+pg8000" not in db_url:
         except Exception:
             db_url = db_url.replace("postgresql://", "postgresql+pg8000://", 1)
 
-# Clean up libpq-only parameters that pg8000 does not accept
-if "+pg8000" in db_url:
-    try:
-        parsed = urlparse(db_url)
-        q = parse_qs(parsed.query)
-        unsupported = ["channel_binding", "endpoint", "sslrootcert"]
-        for param in unsupported:
-            q.pop(param, None)
-        db_url = urlunparse(parsed._replace(query=urlencode(q, doseq=True)))
-    except Exception as e:
-        print(f"URL sanitize warning: {e}", flush=True)
+import ssl
 
 connect_args = {}
 engine_kwargs = {}
+
+# Clean up query parameters for pg8000 and configure ssl_context properly
+if "+pg8000" in db_url:
+    try:
+        parsed = urlparse(db_url)
+        needs_ssl = "sslmode" in parsed.query or "require" in parsed.query or "neon.tech" in db_url
+        # Strip all query params since pg8000 rejects libpq-specific kwargs
+        db_url = urlunparse(parsed._replace(query=""))
+        if needs_ssl:
+            connect_args["ssl_context"] = ssl.create_default_context()
+    except Exception as e:
+        print(f"URL sanitize warning: {e}", flush=True)
 
 if db_url.startswith("sqlite"):
     connect_args["check_same_thread"] = False
