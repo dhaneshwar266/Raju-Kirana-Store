@@ -8,10 +8,13 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api"
 
-    # Database (supports Vercel Postgres POSTGRES_URL and DATABASE_URL)
+    # Database (supports Neon / Vercel Postgres env vars: POSTGRES_URL, STORAGE_URL, DATABASE_URL, etc.)
     DATABASE_URL: str = (
         os.getenv("POSTGRES_URL")
         or os.getenv("DATABASE_URL")
+        or os.getenv("STORAGE_URL")
+        or os.getenv("STORAGE_POSTGRES_URL")
+        or os.getenv("STORAGE_DATABASE_URL")
         or os.getenv("POSTGRES_PRISMA_URL")
         or "sqlite:///./raju_kirana.db"
     )
